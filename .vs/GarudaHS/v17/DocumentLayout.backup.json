@@ -36,7 +36,7 @@
               "RelativeDocumentMoniker": "client\\src\\modules\\AntiDebugAdvanced.cpp",
               "ToolTip": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\src\\modules\\AntiDebugAdvanced.cpp",
               "RelativeToolTip": "client\\src\\modules\\AntiDebugAdvanced.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAABoAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-07-03T06:20:09.135Z",
               "EditorCaption": ""
@@ -51,8 +51,7 @@
               "RelativeToolTip": "client\\include\\AntiDebugAdvanced.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-03T06:19:52.413Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-03T06:19:52.413Z"
             },
             {
               "$type": "Document",
@@ -64,8 +63,7 @@
               "RelativeToolTip": "client\\dllmain.cpp",
               "ViewState": "AgIAAEUAAAAAAAAAAAAAAFIAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-02T04:36:21.039Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-02T04:36:21.039Z"
             }
           ]
         }

@@ -1,3 +1,2 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppClean.targets(77,5): warning : Access to the path 'f:\private mmo\republic project\12. republic anti cheat\garudahs\debug\server.exe' is denied.
-  server.cpp
-LINK : fatal error LNK1104: cannot open file 'F:\Private MMO\Republic Project\12. Republic Anti Cheat\GarudaHS\Debug\server.exe'
+﻿  server.cpp
+  server.vcxproj -> F:\Private MMO\Republic Project\12. Republic Anti Cheat\GarudaHS\Debug\server.exe

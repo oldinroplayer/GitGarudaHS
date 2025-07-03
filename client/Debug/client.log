@@ -7,5 +7,4 @@
   ProcessThreadWatcher.cpp
   Generating Code...
      Creating library F:\Private MMO\Republic Project\12. Republic Anti Cheat\GarudaHS\Debug\client.lib and object F:\Private MMO\Republic Project\12. Republic Anti Cheat\GarudaHS\Debug\client.exp
-AntiDebugAdvanced.obj : error LNK2001: unresolved external symbol _tls_used
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GarudaHS\Debug\client.dll : fatal error LNK1120: 1 unresolved externals
+  client.vcxproj -> F:\Private MMO\Republic Project\12. Republic Anti Cheat\GarudaHS\Debug\client.dll

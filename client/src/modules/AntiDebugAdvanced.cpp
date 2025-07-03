@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "../include/AntiDebugAdvanced.h"
+#include "pch.h"
+#include "../include/AntiDebugAdvanced.h"
 #include "../include/Utils.h"
 #include <windows.h>
 #include <dbghelp.h>      // untuk RtlCaptureContext, bila perlu
@@ -15,12 +17,11 @@ using namespace GarudaHS;
 // 1) TLS Callback
 //    akan dieksekusi oleh loader sebelum DllMain
 // -------------------------------------
-#pragma comment(linker, "/INCLUDE:_tls_used")
+// **Baris #pragma INCLUDE dihapus di sini**
 #pragma const_seg(".CRT$XLB")
 EXTERN_C const PIMAGE_TLS_CALLBACK tls_cb = [](PVOID, DWORD reason, PVOID) {
     if (reason == DLL_PROCESS_ATTACH) {
         LogToServer("[AntiDebugAdv] TLS_CALLBACK: process attach\n");
-        // bisa langsung batalkan jika dideteksi kondisi aneh
     }
     };
 #pragma const_seg()
