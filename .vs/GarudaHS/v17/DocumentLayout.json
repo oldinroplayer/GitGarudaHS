@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\src\\modules\\AntiDebugChecker.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|solutionrelative:client\\src\\modules\\AntiDebugChecker.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\include\\AntiDebugChecker.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|solutionrelative:client\\include\\AntiDebugChecker.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\src\\modules\\AntiDebugAdvanced.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|solutionrelative:client\\src\\modules\\AntiDebugAdvanced.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\dllmain.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|solutionrelative:client\\dllmain.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\include\\AntiDebugAdvanced.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{907ADCB9-6716-4A2B-9AFF-0575144E8367}|client\\client.vcxproj|solutionrelative:client\\include\\AntiDebugAdvanced.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,38 +31,38 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "AntiDebugChecker.cpp",
-              "DocumentMoniker": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\src\\modules\\AntiDebugChecker.cpp",
-              "RelativeDocumentMoniker": "client\\src\\modules\\AntiDebugChecker.cpp",
-              "ToolTip": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\src\\modules\\AntiDebugChecker.cpp",
-              "RelativeToolTip": "client\\src\\modules\\AntiDebugChecker.cpp",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAEcAAAABAAAAAAAAAA==",
+              "Title": "AntiDebugAdvanced.cpp",
+              "DocumentMoniker": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\src\\modules\\AntiDebugAdvanced.cpp",
+              "RelativeDocumentMoniker": "client\\src\\modules\\AntiDebugAdvanced.cpp",
+              "ToolTip": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\src\\modules\\AntiDebugAdvanced.cpp",
+              "RelativeToolTip": "client\\src\\modules\\AntiDebugAdvanced.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-03T06:01:32.447Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AntiDebugChecker.h",
-              "DocumentMoniker": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\include\\AntiDebugChecker.h",
-              "RelativeDocumentMoniker": "client\\include\\AntiDebugChecker.h",
-              "ToolTip": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\include\\AntiDebugChecker.h",
-              "RelativeToolTip": "client\\include\\AntiDebugChecker.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-03T06:00:59.168Z",
+              "WhenOpened": "2025-07-03T06:20:09.135Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "AntiDebugAdvanced.h",
+              "DocumentMoniker": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\include\\AntiDebugAdvanced.h",
+              "RelativeDocumentMoniker": "client\\include\\AntiDebugAdvanced.h",
+              "ToolTip": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\include\\AntiDebugAdvanced.h",
+              "RelativeToolTip": "client\\include\\AntiDebugAdvanced.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-03T06:19:52.413Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "dllmain.cpp",
               "DocumentMoniker": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\dllmain.cpp",
               "RelativeDocumentMoniker": "client\\dllmain.cpp",
               "ToolTip": "F:\\Private MMO\\Republic Project\\12. Republic Anti Cheat\\GarudaHS\\client\\dllmain.cpp",
               "RelativeToolTip": "client\\dllmain.cpp",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAE8AAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAAAFIAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-07-02T04:36:21.039Z",
               "EditorCaption": ""

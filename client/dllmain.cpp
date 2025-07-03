@@ -2,6 +2,7 @@
 #include "../include/ProcessThreadWatcher.h"
 #include "../include/OverlayScanner.h"
 #include "../include/AntiDebugChecker.h"
+#include "../include/AntiDebugAdvanced.h"
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -70,6 +71,7 @@ BOOL APIENTRY DllMain(HMODULE, DWORD reason, LPVOID) {
         GarudaHS::ProcessThreadWatcher::Initialize();
         GarudaHS::OverlayScanner::Initialize();
         GarudaHS::AntiDebugChecker::Initialize();
+        GarudaHS::AntiDebugAdvanced::Initialize();
         
 
         // Jalankan loop tick di thread terpisah
@@ -78,6 +80,7 @@ BOOL APIENTRY DllMain(HMODULE, DWORD reason, LPVOID) {
                 GarudaHS::ProcessThreadWatcher::Tick();
                 GarudaHS::OverlayScanner::Tick();
                 GarudaHS::AntiDebugChecker::Tick();
+                GarudaHS::AntiDebugAdvanced::Tick();
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
             });
