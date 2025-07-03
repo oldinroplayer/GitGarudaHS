@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\AntiDebugChecker.h" />
     <ClInclude Include="include\framework.h" />
     <ClInclude Include="include\OverlayScanner.h" />
     <ClInclude Include="include\pch.h" />
@@ -157,6 +158,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\hook.cpp" />
+    <ClCompile Include="src\modules\AntiDebugChecker.cpp" />
     <ClCompile Include="src\modules\OverlayScanner.cpp" />
     <ClCompile Include="src\modules\ProcessThreadWatcher.cpp" />
   </ItemGroup>
