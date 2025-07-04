@@ -1,2 +1,0 @@
-# GitGarudaHS
-Anticheat For MMO
