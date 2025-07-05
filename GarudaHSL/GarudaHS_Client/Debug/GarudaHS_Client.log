@@ -1,6 +1,7 @@
 ﻿  pch.cpp
   dllmain.cpp
   overlaywatch.cpp
+  memscan.cpp
   netclient.cpp
   selfprotect.cpp
   threadwatch.cpp

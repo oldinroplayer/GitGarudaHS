@@ -8,6 +8,7 @@
 #include "windowwatch.h"
 #include "overlaywatch.h"
 #include "netclient.h"
+#include "memscan.h"
 
 std::vector<std::wstring> proses_cheat = {
     L"cheatengine.exe",
@@ -51,6 +52,7 @@ void cek_proses_cheat() {
     cek_thread_mencurigakan(); //  panggil di akhir scan
     cek_jendela_cheat(); //  panggil window scan
     cek_overlay_cheat(); // Panggil overlay checker
+	scan_signature_cheat(); // Panggil signature scanner
 }
 
 

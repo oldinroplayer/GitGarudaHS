@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="include\memscan.h" />
     <ClInclude Include="include\netclient.h" />
     <ClInclude Include="include\overlaywatch.h" />
     <ClInclude Include="include\selfprotect.h" />
@@ -159,6 +160,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\memscan.cpp" />
     <ClCompile Include="src\netclient.cpp" />
     <ClCompile Include="src\selfprotect.cpp" />
     <ClCompile Include="src\threadwatch.cpp" />
