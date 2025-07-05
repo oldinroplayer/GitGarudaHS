@@ -1,0 +1,11 @@
+﻿  pch.cpp
+  dllmain.cpp
+  overlaywatch.cpp
+  threadwatch.cpp
+F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\dllmain.cpp(19,1): error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?
+F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\include\overlaywatch.cpp(44,1): error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?
+  watcher.cpp
+F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\src\threadwatch.cpp(62,1): error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?
+F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\src\watcher.cpp(66,1): error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?
+  windowwatch.cpp
+F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\src\windowwatch.cpp(38,1): error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?

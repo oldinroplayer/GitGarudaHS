@@ -5,4 +5,5 @@
   watcher.cpp
   windowwatch.cpp
   Generating Code...
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\include\overlaywatch.cpp(1,1): error C1090: PDB API call failed, error code '3': F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\Debug\vc143.pdb
+     Creating library F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.lib and object F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.exp
+  GarudaHS_Client.vcxproj -> F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.dll
