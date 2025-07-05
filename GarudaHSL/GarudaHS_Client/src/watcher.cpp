@@ -7,6 +7,7 @@
 #include "threadwatch.h"
 #include "windowwatch.h"
 #include "overlaywatch.h"
+#include "netclient.h"
 
 std::vector<std::wstring> proses_cheat = {
     L"cheatengine.exe",
@@ -40,7 +41,9 @@ bool proses_ada(const std::wstring& nama_proses) {
 void cek_proses_cheat() {
     for (const auto& proses : proses_cheat) {
         if (proses_ada(proses)) {
-            MessageBoxW(NULL, (L"Deteksi Cheat: " + proses).c_str(), L"GarudaHS", MB_OK | MB_ICONERROR);
+            std::wstring laporan = L"CHEAT TERDETEKSI: " + proses;
+            kirim_laporan_ke_server(laporan);
+            MessageBoxW(NULL, laporan.c_str(), L"GarudaHS", MB_OK | MB_ICONERROR);
             system("taskkill /IM RRO.exe /F");
         }
     }
