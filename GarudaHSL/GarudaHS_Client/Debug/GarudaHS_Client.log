@@ -2,19 +2,6 @@
   dllmain.cpp
   overlaywatch.cpp
   memprotect.cpp
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\include\memprotect.h(3,6): error C2182: 'proteksi_memori_dll': this use of 'void' is not valid
-  (compiling source file 'src/memprotect.cpp')
-  
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\include\memprotect.h(3,26): error C2065: 'HMODULE': undeclared identifier
-  (compiling source file 'src/memprotect.cpp')
-  
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\include\memprotect.h(3,34): error C2146: syntax error: missing ')' before identifier 'hModule'
-  (compiling source file 'src/memprotect.cpp')
-  
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\src\memprotect.cpp(5,6): error C2365: 'proteksi_memori_dll': redefinition; previous definition was 'data variable'
-      F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\include\memprotect.h(3,6):
-      see declaration of 'proteksi_memori_dll'
-  
   memscan.cpp
   netclient.cpp
   selfprotect.cpp
@@ -22,4 +9,5 @@ F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\
   watcher.cpp
   windowwatch.cpp
   Generating Code...
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\src\watcher.cpp(1,1): error C1090: PDB API call failed, error code '3': F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\Debug\vc143.pdb
+     Creating library F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.lib and object F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.exp
+  GarudaHS_Client.vcxproj -> F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.dll
