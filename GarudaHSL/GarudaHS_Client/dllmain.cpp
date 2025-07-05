@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <thread>
 #include "watcher.h"
+#include "selfprotect.h"  //  Tambahkan header ini
 
 DWORD WINAPI MulaiThread(LPVOID lpParam) {
     while (true) {
@@ -13,6 +14,7 @@ DWORD WINAPI MulaiThread(LPVOID lpParam) {
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         CreateThread(nullptr, 0, MulaiThread, nullptr, 0, nullptr);
+        mulai_self_protect(); // Tambahkan pemanggilan thread proteksi
     }
     return TRUE;
 }

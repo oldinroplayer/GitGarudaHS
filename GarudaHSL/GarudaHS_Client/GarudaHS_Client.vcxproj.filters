@@ -36,6 +36,9 @@
     <ClInclude Include="include\overlaywatch.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\selfprotect.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -54,6 +57,9 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="include\overlaywatch.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\selfprotect.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
