@@ -45,6 +45,9 @@
     <ClInclude Include="include\memscan.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\memprotect.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -72,6 +75,9 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="src\memscan.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memprotect.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
