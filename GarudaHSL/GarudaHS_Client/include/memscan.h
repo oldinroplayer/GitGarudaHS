@@ -19,6 +19,7 @@ struct CheatSignature {
 // Function declarations
 void scan_signature_cheat();
 bool advanced_signature_search(const BYTE* data, SIZE_T size, const CheatSignature& signature);
+bool boyer_moore_search(const BYTE* data, SIZE_T size, const CheatSignature& signature);
 bool verify_cheat_context(const BYTE* data, SIZE_T size, SIZE_T found_offset);
 bool is_process_whitelisted(const std::wstring& process_name);
 bool is_memory_region_safe(const MEMORY_BASIC_INFORMATION& mbi);

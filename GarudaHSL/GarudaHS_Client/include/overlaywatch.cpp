@@ -1,4 +1,5 @@
 #include "overlaywatch.h"
+#include "whitelist.h"
 #include <windows.h>
 #include <string>
 #include <vector>
@@ -6,6 +7,7 @@
 #include <set>
 #include <algorithm>
 #include <tlhelp32.h>
+#include <iostream>
 
 // Daftar aplikasi yang diizinkan (whitelist)
 static const std::set<std::wstring> ALLOWED_PROCESSES = {
@@ -96,7 +98,7 @@ bool IsSystemWindow(HWND hwnd) {
     return systemClasses.find(classNameStr) != systemClasses.end();
 }
 
-// Fungsi untuk mengecek apakah window adalah overlay yang mencurigakan
+// Enhanced overlay detection with better heuristics
 bool IsSuspiciousOverlay(HWND hwnd) {
     RECT rect;
     GetWindowRect(hwnd, &rect);
@@ -105,28 +107,69 @@ bool IsSuspiciousOverlay(HWND hwnd) {
     int width = rect.right - rect.left;
     int height = rect.bottom - rect.top;
 
-    // Skip window yang terlalu kecil (kemungkinan tooltip, cursor, dll)
-    if (width < 50 || height < 50) return false;
+    // Skip window yang terlalu kecil (tooltip, cursor, notification)
+    if (width < 100 || height < 50) return false;
 
-    // Skip window yang terlalu besar (kemungkinan aplikasi normal)
+    // Skip window yang terlalu besar (aplikasi normal, fullscreen)
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    if (width > screenWidth * 0.8 || height > screenHeight * 0.8) return false;
+    if (width > screenWidth * 0.9 || height > screenHeight * 0.9) return false;
 
-    // Cek posisi - overlay cheat biasanya di tengah atau sudut tertentu
-    int centerX = screenWidth / 2;
-    int centerY = screenHeight / 2;
-    int windowCenterX = rect.left + width / 2;
-    int windowCenterY = rect.top + height / 2;
-
-    // Jika window berada di pojok kanan atas (kemungkinan legitimate overlay)
+    // Check for legitimate overlay positions
+    // Top-right corner (system notifications, antivirus, etc.)
     if (rect.left > screenWidth * 0.7 && rect.top < screenHeight * 0.3) {
         return false;
     }
 
-    return true;
+    // Bottom-right corner (system tray notifications)
+    if (rect.left > screenWidth * 0.7 && rect.top > screenHeight * 0.7) {
+        return false;
+    }
+
+    // Top-left corner (some legitimate overlays)
+    if (rect.left < screenWidth * 0.3 && rect.top < screenHeight * 0.3) {
+        return false;
+    }
+
+    // Check window class for known legitimate overlays
+    wchar_t className[256];
+    if (GetClassNameW(hwnd, className, sizeof(className) / sizeof(wchar_t))) {
+        std::wstring classStr(className);
+        std::transform(classStr.begin(), classStr.end(), classStr.begin(), ::tolower);
+
+        // Known legitimate overlay classes
+        if (classStr.find(L"tooltip") != std::wstring::npos ||
+            classStr.find(L"notification") != std::wstring::npos ||
+            classStr.find(L"popup") != std::wstring::npos ||
+            classStr.find(L"menu") != std::wstring::npos ||
+            classStr.find(L"dropdown") != std::wstring::npos) {
+            return false;
+        }
+    }
+
+    // Check for suspicious characteristics
+    // Very small but not tiny (common cheat overlay size)
+    if (width >= 100 && width <= 400 && height >= 50 && height <= 300) {
+        // Check if positioned suspiciously (center or game area)
+        int centerX = screenWidth / 2;
+        int centerY = screenHeight / 2;
+        int windowCenterX = rect.left + width / 2;
+        int windowCenterY = rect.top + height / 2;
+
+        // If near center of screen, more suspicious
+        int distanceFromCenter = abs(windowCenterX - centerX) + abs(windowCenterY - centerY);
+        if (distanceFromCenter < screenWidth * 0.3) {
+            return true;
+        }
+    }
+
+    return false; // Default to not suspicious to reduce false positives
 }
+
+// Overlay detection state
+static DWORD last_overlay_scan = 0;
+static int overlay_scan_count = 0;
 
 BOOL CALLBACK EnumWindowsOverlayProc(HWND hwnd, LPARAM lParam) {
     if (!IsWindowVisible(hwnd)) return TRUE;
@@ -138,22 +181,27 @@ BOOL CALLBACK EnumWindowsOverlayProc(HWND hwnd, LPARAM lParam) {
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
 
-    // Cek apakah window memiliki karakteristik overlay
+    // More relaxed overlay detection - require at least 2 of 3 characteristics
     bool noBorder = !(style & WS_CAPTION);
     bool isTopMost = (exStyle & WS_EX_TOPMOST);
     bool isLayered = (exStyle & WS_EX_LAYERED);
 
-    // Hanya proses window yang memiliki semua karakteristik overlay
-    if (noBorder && isTopMost && isLayered) {
+    int overlay_characteristics = (noBorder ? 1 : 0) + (isTopMost ? 1 : 0) + (isLayered ? 1 : 0);
+
+    // Require at least 2 characteristics to reduce false positives
+    if (overlay_characteristics >= 2) {
         // Dapatkan nama proses
         std::wstring processName = GetProcessNameFromHWND(hwnd);
-
-        // Konversi ke lowercase untuk perbandingan case-insensitive
         std::transform(processName.begin(), processName.end(), processName.begin(), ::tolower);
 
-        // Cek whitelist proses
-        if (ALLOWED_PROCESSES.find(processName) != ALLOWED_PROCESSES.end()) {
-            return TRUE; // Skip proses yang diizinkan
+        // Use intelligent whitelist system
+        if (IntelligentWhitelist::IsProcessWhitelisted(processName)) {
+            return TRUE;
+        }
+
+        // Additional check for window legitimacy
+        if (IntelligentWhitelist::IsWindowLegitimate(hwnd)) {
+            return TRUE;
         }
 
         // Dapatkan judul window
@@ -161,43 +209,55 @@ BOOL CALLBACK EnumWindowsOverlayProc(HWND hwnd, LPARAM lParam) {
         GetWindowTextW(hwnd, title, sizeof(title) / sizeof(wchar_t));
         std::wstring judul(title);
 
-        // Cek whitelist nama window
+        // Enhanced window title checking
         for (const auto& allowedName : ALLOWED_WINDOW_NAMES) {
             if (judul.find(allowedName) != std::wstring::npos) {
-                return TRUE; // Skip window yang diizinkan
+                return TRUE;
             }
         }
 
-        // Cek atribut layered window
-        BYTE alpha = 255;
-        COLORREF crKey;
-        DWORD flags = 0;
+        // Additional legitimate window title patterns
+        if (judul.find(L"notification") != std::wstring::npos ||
+            judul.find(L"tooltip") != std::wstring::npos ||
+            judul.find(L"popup") != std::wstring::npos ||
+            judul.find(L"menu") != std::wstring::npos) {
+            return TRUE;
+        }
 
-        if (GetLayeredWindowAttributes(hwnd, &crKey, &alpha, &flags)) {
-            // Cek transparansi dengan threshold yang lebih ketat
-            if ((flags & LWA_ALPHA) && alpha < 200) {
-                // Lakukan pemeriksaan tambahan untuk mengurangi false positive
-                if (!IsSuspiciousOverlay(hwnd)) {
-                    return TRUE; // Skip jika tidak mencurigakan
-                }
+        // Enhanced suspicious overlay detection
+        if (IsSuspiciousOverlay(hwnd)) {
+            // Check layered window attributes if available
+            BYTE alpha = 255;
+            COLORREF crKey;
+            DWORD flags = 0;
 
-                // Jika semua pemeriksaan menunjukkan overlay mencurigakan
-                if (judul.empty()) judul = L"(Tidak Berjudul / Overlay)";
+            if (GetLayeredWindowAttributes(hwnd, &crKey, &alpha, &flags)) {
+                // More strict alpha threshold
+                if ((flags & LWA_ALPHA) && alpha < 180) {
+                    if (judul.empty()) judul = L"(Tidak Berjudul / Overlay)";
 
-                // Tambahkan informasi debug
-                std::wstring debugInfo = L"Deteksi Overlay Mencurigakan:\n";
-                debugInfo += L"Judul: " + judul + L"\n";
-                debugInfo += L"Proses: " + processName + L"\n";
-                debugInfo += L"Alpha: " + std::to_wstring(alpha) + L"\n";
-                debugInfo += L"Apakah Anda yakin ini adalah cheat?";
+                    // Log detection for analysis
+                    std::wcout << L"[OVERLAY] Suspicious overlay detected: " << judul
+                               << L" (Process: " << processName << L", Alpha: " << alpha << L")" << std::endl;
 
-                int result = MessageBoxW(NULL, debugInfo.c_str(), L"GarudaHS - Konfirmasi",
-                    MB_YESNO | MB_ICONQUESTION);
+                    // Ask for user confirmation to reduce false positives
+                    std::wstring debugInfo = L"Deteksi Overlay Mencurigakan:\n";
+                    debugInfo += L"Judul: " + judul + L"\n";
+                    debugInfo += L"Proses: " + processName + L"\n";
+                    debugInfo += L"Alpha: " + std::to_wstring(alpha) + L"\n";
+                    debugInfo += L"Karakteristik: " + std::to_wstring(overlay_characteristics) + L"/3\n";
+                    debugInfo += L"Apakah Anda yakin ini adalah cheat?";
 
-                if (result == IDYES) {
-                    // Hanya kill RRO.exe jika user mengkonfirmasi
-                    system("taskkill /IM RRO.exe /F");
-                    return FALSE; // stop scan
+                    int result = MessageBoxW(NULL, debugInfo.c_str(), L"GarudaHS - Konfirmasi",
+                        MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2); // Default to NO
+
+                    if (result == IDYES) {
+                        std::wcout << L"[ACTION] User confirmed cheat overlay, terminating game" << std::endl;
+                        system("taskkill /IM RRO.exe /F");
+                        return FALSE;
+                    } else {
+                        std::wcout << L"[INFO] User denied cheat overlay, continuing" << std::endl;
+                    }
                 }
             }
         }

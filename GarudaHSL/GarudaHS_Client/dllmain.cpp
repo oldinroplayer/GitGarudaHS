@@ -2,10 +2,12 @@
 #include <thread>
 #include <atomic>
 #include <memory>
+#include <iostream>
 #include "watcher.h"
 #include "selfprotect.h"
 #include "memprotect.h"
 #include "unloadprotect.h"
+#include "whitelist.h"
 
 // Manajemen state global
 static std::atomic<bool> g_protection_active(false);
@@ -69,6 +71,9 @@ bool InitializeProtection(HMODULE hModule) {
     }
 
     try {
+        // Initialize intelligent whitelist system first
+        IntelligentWhitelist::Initialize();
+
         // Konfigurasi proteksi berdasarkan environment
         ProtectionConfig config;
 
@@ -79,33 +84,40 @@ bool InitializeProtection(HMODULE hModule) {
             config.enableStringObfuscation = false;
             config.debugCheckInterval = 10000; // 10 detik
             enable_development_mode(true);
+            std::wcout << L"[INIT] Development mode enabled" << std::endl;
         }
 
         // Inisialisasi proteksi memori
         g_memory_protector = std::make_unique<MemoryProtector>(hModule, config);
         if (!g_memory_protector->InitializeProtection()) {
+            std::wcout << L"[ERROR] Failed to initialize memory protection" << std::endl;
             return false;
         }
 
         // Mulai self-protection
         g_protection_active.store(true);
+        std::wcout << L"[INIT] Protection system activated" << std::endl;
 
         // Buat watcher thread
         g_watcher_thread = CreateThread(nullptr, 0, MulaiThread, nullptr, 0, nullptr);
         if (!g_watcher_thread) {
             g_protection_active.store(false);
+            std::wcout << L"[ERROR] Failed to create watcher thread" << std::endl;
             return false;
         }
 
+        std::wcout << L"[INIT] GarudaHS Client initialized successfully" << std::endl;
         return true;
     }
     catch (...) {
+        std::wcout << L"[ERROR] Exception during initialization" << std::endl;
         return false;
     }
 }
 
 // Fungsi cleanup yang aman
 void CleanupProtection() {
+    std::wcout << L"[CLEANUP] Starting GarudaHS cleanup" << std::endl;
     g_shutting_down.store(true);
     g_protection_active.store(false);
 
@@ -124,6 +136,11 @@ void CleanupProtection() {
 
     // Cleanup proteksi memori global
     cleanup_memory_protection();
+
+    // Cleanup whitelist system
+    IntelligentWhitelist::Cleanup();
+
+    std::wcout << L"[CLEANUP] GarudaHS cleanup completed" << std::endl;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {

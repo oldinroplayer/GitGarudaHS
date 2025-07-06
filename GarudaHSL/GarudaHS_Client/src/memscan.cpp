@@ -1,6 +1,7 @@
 #include "memscan.h"
 #include "memprotect.h"
 #include "netclient.h"
+#include "whitelist.h"
 #include <windows.h>
 #include <psapi.h>
 #include <tlhelp32.h>
@@ -109,22 +110,76 @@ static const std::set<std::wstring> SAFE_MEMORY_REGIONS = {
 bool advanced_signature_search(const BYTE* data, SIZE_T size, const CheatSignature& signature) {
     if (size < signature.pattern.size()) return false;
 
-    for (SIZE_T i = 0; i <= size - signature.pattern.size(); ++i) {
+    // Use Boyer-Moore-like optimization for longer patterns
+    if (signature.pattern.size() > 8) {
+        return boyer_moore_search(data, size, signature);
+    }
+
+    // Optimized search for shorter patterns
+    const SIZE_T pattern_size = signature.pattern.size();
+    const SIZE_T search_limit = size - pattern_size + 1;
+
+    // Use SIMD-friendly alignment when possible
+    for (SIZE_T i = 0; i < search_limit; ++i) {
+        // Quick first-byte check
+        if (signature.pattern[0] != 0xCC && data[i] != signature.pattern[0]) {
+            continue;
+        }
+
+        // Check remaining bytes
         bool match = true;
-        for (SIZE_T j = 0; j < signature.pattern.size(); ++j) {
+        for (SIZE_T j = 1; j < pattern_size; ++j) {
             if (signature.pattern[j] != 0xCC && data[i + j] != signature.pattern[j]) {
                 match = false;
                 break;
             }
         }
+
         if (match) {
-            // Jika signature membutuhkan context verification
-            if (signature.require_context) {
+            // Context verification for high-confidence signatures only
+            if (signature.require_context && signature.confidence_weight >= 7) {
                 return verify_cheat_context(data, size, i);
             }
             return true;
         }
     }
+    return false;
+}
+
+// Boyer-Moore search for longer patterns
+bool boyer_moore_search(const BYTE* data, SIZE_T size, const CheatSignature& signature) {
+    const SIZE_T pattern_size = signature.pattern.size();
+    if (size < pattern_size) return false;
+
+    // Build bad character table (simplified)
+    int bad_char[256];
+    for (int i = 0; i < 256; i++) {
+        bad_char[i] = pattern_size;
+    }
+
+    for (SIZE_T i = 0; i < pattern_size - 1; i++) {
+        if (signature.pattern[i] != 0xCC) {
+            bad_char[signature.pattern[i]] = pattern_size - 1 - i;
+        }
+    }
+
+    SIZE_T shift = 0;
+    while (shift <= size - pattern_size) {
+        SIZE_T j = pattern_size - 1;
+
+        while (j < pattern_size && (signature.pattern[j] == 0xCC || signature.pattern[j] == data[shift + j])) {
+            if (j == 0) {
+                if (signature.require_context && signature.confidence_weight >= 7) {
+                    return verify_cheat_context(data, size, shift);
+                }
+                return true;
+            }
+            j--;
+        }
+
+        shift += max(1, bad_char[data[shift + j]] - (pattern_size - 1 - j));
+    }
+
     return false;
 }
 
@@ -206,18 +261,8 @@ bool verify_cheat_context(const BYTE* data, SIZE_T size, SIZE_T found_offset) {
 }
 
 bool is_process_whitelisted(const std::wstring& process_name) {
-    std::wstring lower_name = process_name;
-    std::transform(lower_name.begin(), lower_name.end(), lower_name.begin(), ::towlower);
-
-    for (const auto& whitelist : PROCESS_WHITELIST) {
-        std::wstring lower_whitelist = whitelist.process_name;
-        std::transform(lower_whitelist.begin(), lower_whitelist.end(), lower_whitelist.begin(), ::towlower);
-
-        if (lower_name == lower_whitelist) {
-            return true;
-        }
-    }
-    return false;
+    // Use intelligent whitelist system for better accuracy
+    return IntelligentWhitelist::IsProcessWhitelisted(process_name);
 }
 
 
@@ -305,6 +350,16 @@ void scan_signature_cheat() {
         return;
     }
 
+    // Throttling: Cek beban sistem sebelum scan
+    MEMORYSTATUSEX memStatus;
+    memStatus.dwLength = sizeof(memStatus);
+    if (GlobalMemoryStatusEx(&memStatus)) {
+        if (memStatus.dwMemoryLoad > 85) {
+            std::wcout << L"[INFO] System memory usage high, skipping intensive scan" << std::endl;
+            return;
+        }
+    }
+
     HANDLE hProcess = GetCurrentProcess();
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
@@ -315,50 +370,139 @@ void scan_signature_cheat() {
     std::vector<std::string> detected_signatures;
     int scan_count = 0;
     int skip_count = 0;
-    int consecutive_detections = 0; // Tambahkan counter untuk deteksi berturut-turut
+    int consecutive_detections = 0;
 
-    while (addr < sysInfo.lpMaximumApplicationAddress) {
+    // Limit scanning to reduce performance impact
+    const SIZE_T MAX_SCAN_SIZE = 50 * 1024 * 1024; // 50MB limit per scan cycle
+    SIZE_T total_scanned = 0;
+
+    // Smart scanning: Focus on suspicious regions first
+    std::vector<BYTE*> priority_regions;
+    std::vector<BYTE*> normal_regions;
+
+    // First pass: Categorize memory regions
+    while (addr < sysInfo.lpMaximumApplicationAddress && total_scanned < MAX_SCAN_SIZE) {
         if (VirtualQuery(addr, &mbi, sizeof(mbi)) == sizeof(mbi)) {
             if (mbi.State == MEM_COMMIT) {
-                // Cek apakah region ini aman untuk diabaikan
+                // Skip safe regions
                 if (is_memory_region_safe(mbi)) {
                     skip_count++;
                     addr += mbi.RegionSize;
                     continue;
                 }
 
-                // Hanya scan memory yang readable dan executable
+                // Prioritize executable regions and private memory
                 if (mbi.Protect & (PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE)) {
-                    std::vector<BYTE> buffer(mbi.RegionSize);
-                    SIZE_T bytesRead;
-
-                    if (ReadProcessMemory(hProcess, addr, buffer.data(), mbi.RegionSize, &bytesRead)) {
-                        scan_count++;
-
-                        // Scan dengan semua signature
-                        for (const auto& signature : CHEAT_SIGNATURES) {
-                            if (advanced_signature_search(buffer.data(), bytesRead, signature)) {
-                                detected_signatures.push_back(signature.name);
-                                consecutive_detections++;
-                            }
-                        }
+                    if (mbi.Type == MEM_PRIVATE) {
+                        priority_regions.push_back(addr); // High priority: private executable
+                    } else {
+                        normal_regions.push_back(addr); // Normal priority
                     }
                 }
             }
             addr += mbi.RegionSize;
         }
         else {
-            addr += 0x1000; // Skip 4KB if VirtualQuery fails
+            addr += 0x1000;
         }
     }
 
-    // Hitung threat score
+    // Second pass: Scan priority regions first
+    auto scan_region = [&](BYTE* region_addr) {
+        if (total_scanned >= MAX_SCAN_SIZE) return false;
+
+        MEMORY_BASIC_INFORMATION region_mbi;
+        if (VirtualQuery(region_addr, &region_mbi, sizeof(region_mbi)) != sizeof(region_mbi)) {
+            return true;
+        }
+
+        // Limit individual region scan size
+        SIZE_T scan_size = min(region_mbi.RegionSize, 1024 * 1024); // Max 1MB per region
+        std::vector<BYTE> buffer(scan_size);
+        SIZE_T bytesRead;
+
+        if (ReadProcessMemory(hProcess, region_addr, buffer.data(), scan_size, &bytesRead)) {
+            scan_count++;
+            total_scanned += bytesRead;
+
+            // Use optimized signature search
+            for (const auto& signature : CHEAT_SIGNATURES) {
+                if (signature.confidence_weight < 5) continue; // Skip low-confidence signatures
+
+                if (advanced_signature_search(buffer.data(), bytesRead, signature)) {
+                    detected_signatures.push_back(signature.name);
+                    consecutive_detections++;
+
+                    // Early termination if high-confidence detection found
+                    if (signature.confidence_weight >= 8) {
+                        return false; // Stop scanning
+                    }
+                }
+            }
+        }
+        return true;
+    };
+
+    // Scan priority regions first
+    for (auto region : priority_regions) {
+        if (!scan_region(region)) break;
+    }
+
+    // Scan normal regions if no high-confidence detections
+    if (consecutive_detections == 0 && total_scanned < MAX_SCAN_SIZE) {
+        for (auto region : normal_regions) {
+            if (!scan_region(region)) break;
+        }
+    }
+
+    // Enhanced threat analysis with intelligent scoring
     int threat_score = calculate_threat_score(detected_signatures);
 
-    // Threshold untuk menentukan apakah ini cheat atau false positive
-    const int THREAT_THRESHOLD = 150; // Tingkatkan threshold agar tidak mudah false positive
+    // Logging untuk debugging dan monitoring
+    std::wcout << L"[SCAN] Regions scanned: " << scan_count
+               << L", Skipped: " << skip_count
+               << L", Total data: " << total_scanned / 1024 << L"KB" << std::endl;
 
-    if (threat_score >= THREAT_THRESHOLD && consecutive_detections > 2) { // Pastikan deteksi berulang
+    if (!detected_signatures.empty()) {
+        std::wcout << L"[DETECTION] Found " << detected_signatures.size()
+                   << L" signatures, threat score: " << threat_score << std::endl;
+    }
+
+    // Multi-layered detection logic to reduce false positives
+    bool is_legitimate_detection = false;
+    const int HIGH_CONFIDENCE_THRESHOLD = 200; // Raised threshold
+    const int MEDIUM_CONFIDENCE_THRESHOLD = 100;
+
+    if (threat_score >= HIGH_CONFIDENCE_THRESHOLD) {
+        // High confidence: Require multiple different signature types
+        if (consecutive_detections >= 3) {
+            std::set<std::string> signature_types;
+            for (const auto& sig : detected_signatures) {
+                size_t pos = sig.find('_');
+                if (pos != std::string::npos) {
+                    signature_types.insert(sig.substr(0, pos));
+                }
+            }
+
+            // Require at least 2 different types of signatures
+            if (signature_types.size() >= 2) {
+                is_legitimate_detection = true;
+            }
+        }
+
+        // For very high confidence signatures, allow single detection
+        for (const auto& sig : detected_signatures) {
+            for (const auto& signature : CHEAT_SIGNATURES) {
+                if (signature.name == sig && signature.confidence_weight >= 9) {
+                    is_legitimate_detection = true;
+                    break;
+                }
+            }
+            if (is_legitimate_detection) break;
+        }
+    }
+
+    if (is_legitimate_detection) {
         std::wstring laporan = L"CHEAT TERDETEKSI! Threat Score: " + std::to_wstring(threat_score);
         laporan += L"\nSignatures detected: ";
 
@@ -366,20 +510,21 @@ void scan_signature_cheat() {
             int size = MultiByteToWideChar(CP_UTF8, 0, sig.c_str(), -1, nullptr, 0);
             std::wstring wide_sig(size, 0);
             MultiByteToWideChar(CP_UTF8, 0, sig.c_str(), -1, &wide_sig[0], size);
-            wide_sig.pop_back(); // Remove null terminator
+            wide_sig.pop_back();
             laporan += wide_sig + L", ";
         }
 
+        std::wcout << L"[ACTION] Taking action against detected cheat" << std::endl;
         kirim_laporan_ke_server(laporan);
         MessageBoxW(NULL, laporan.c_str(), L"GarudaHS - Cheat Detected", MB_OK | MB_ICONERROR);
         system("taskkill /IM RRO.exe /F");
     }
-    else if (threat_score > 0) {
-        // Low threat score - log saja, jangan terminate
-        std::wstring log_msg = L"[WARNING] Low threat signatures detected. Score: " + std::to_wstring(threat_score);
+    else if (threat_score >= MEDIUM_CONFIDENCE_THRESHOLD) {
+        // Medium confidence: Log and report but don't terminate
+        std::wstring log_msg = L"[WARNING] Suspicious activity detected. Score: " + std::to_wstring(threat_score);
         std::wcout << log_msg << std::endl;
 
-        // Kirim log ke server tapi tidak terminate game
+        // Send warning to server for analysis
         kirim_laporan_ke_server(log_msg);
     }
 
