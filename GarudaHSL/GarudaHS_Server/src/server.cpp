@@ -6,6 +6,8 @@
 #include <fstream>
 #include <chrono>
 #include <ctime>
+#include <iomanip>
+#include <sstream>
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -14,11 +16,25 @@ void simpan_log(const std::string& laporan) {
     std::ofstream logFile("GarudaHS_Server.log", std::ios::app);
     if (!logFile) return;
 
-    // Buat timestamp
+    // Buat timestamp dengan cara yang lebih aman
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
 
-    logFile << "[" << std::ctime(&t) << "] " << laporan << "\n";
+    // Gunakan localtime_s untuk keamanan
+    std::tm tm_buf;
+    errno_t err = localtime_s(&tm_buf, &t);
+
+    if (err == 0) {
+        // Format timestamp secara manual
+        std::ostringstream oss;
+        oss << std::put_time(&tm_buf, "%Y-%m-%d %H:%M:%S");
+        logFile << "[" << oss.str() << "] " << laporan << "\n";
+    }
+    else {
+        // Fallback jika localtime_s gagal
+        logFile << "[TIMESTAMP_ERROR] " << laporan << "\n";
+    }
+
     logFile.close();
 }
 
@@ -37,6 +53,7 @@ void jalankan_server() {
 
     listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (listenSocket == INVALID_SOCKET) {
+        std::cerr << "Gagal membuat socket\n";
         WSACleanup();
         return;
     }
@@ -59,7 +76,18 @@ void jalankan_server() {
         return;
     }
 
-    std::cout << "GarudaHS Server aktif di port 5555...\n";
+    // Tampilkan banner Garuda Hack Shield
+    std::cout << "\n";
+    std::cout << "========================================\n";
+    std::cout << "    GARUDA HACK SHIELD SERVER v1.0\n";
+    std::cout << "========================================\n";
+    std::cout << "           Anti-Cheat Protection\n";
+    std::cout << "========================================\n";
+    std::cout << "Server Status: AKTIF\n";
+    std::cout << "Port: 5555\n";
+    std::cout << "Host: 127.0.0.1 (localhost)\n";
+    std::cout << "========================================\n";
+    std::cout << "Menunggu koneksi dari client...\n\n";
 
     // Loop utama: menerima koneksi client satu per satu
     while (true) {
@@ -73,7 +101,14 @@ void jalankan_server() {
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
         if (bytesReceived > 0) {
             std::string laporan(buffer, bytesReceived);
-            std::cout << "[CLIENT] " << laporan << "\n";
+
+            // Buat timestamp untuk console output
+            auto now = std::chrono::system_clock::now();
+            std::time_t current_time = std::chrono::system_clock::to_time_t(now);
+            std::tm tm_buf;
+            localtime_s(&tm_buf, &current_time);
+
+            std::cout << "[" << std::put_time(&tm_buf, "%H:%M:%S") << "] [CLIENT] " << laporan << "\n";
 
             // Simpan ke file log
             simpan_log(laporan);
@@ -81,11 +116,13 @@ void jalankan_server() {
             // Tanggapi laporan
             if (laporan.find("CHEAT") != std::string::npos) {
                 std::string response = "TERMINATE";
-                send(clientSocket, response.c_str(), response.size(), 0);
+                std::cout << "[" << std::put_time(&tm_buf, "%H:%M:%S") << "] [RESPONSE] CHEAT DETECTED - TERMINATE\n";
+                send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
             }
             else {
                 std::string response = "OK";
-                send(clientSocket, response.c_str(), response.size(), 0);
+                std::cout << "[" << std::put_time(&tm_buf, "%H:%M:%S") << "] [RESPONSE] OK\n";
+                send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
             }
         }
 

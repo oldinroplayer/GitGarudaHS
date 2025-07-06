@@ -1,4 +1,4 @@
 ﻿  main.cpp
   server.cpp
-F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Server\src\server.cpp(21,28): error C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   Generating Code...
+  GarudaHS_Server.vcxproj -> F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Server.exe
