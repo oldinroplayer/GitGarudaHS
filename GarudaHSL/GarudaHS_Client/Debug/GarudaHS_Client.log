@@ -6,6 +6,7 @@
   netclient.cpp
   selfprotect.cpp
   threadwatch.cpp
+  unloadprotect.cpp
   watcher.cpp
   windowwatch.cpp
   Generating Code...

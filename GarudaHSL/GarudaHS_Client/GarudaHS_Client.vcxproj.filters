@@ -48,6 +48,9 @@
     <ClInclude Include="include\memprotect.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\unloadprotect.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -78,6 +81,9 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="src\memprotect.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unloadprotect.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>

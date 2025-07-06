@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -83,7 +83,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\GarudaHS_Client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,6 +152,7 @@
     <ClInclude Include="include\overlaywatch.h" />
     <ClInclude Include="include\selfprotect.h" />
     <ClInclude Include="include\threadwatch.h" />
+    <ClInclude Include="include\unloadprotect.h" />
     <ClInclude Include="include\watcher.h" />
     <ClInclude Include="include\windowwatch.h" />
     <ClInclude Include="pch.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="src\netclient.cpp" />
     <ClCompile Include="src\selfprotect.cpp" />
     <ClCompile Include="src\threadwatch.cpp" />
+    <ClCompile Include="src\unloadprotect.cpp" />
     <ClCompile Include="src\watcher.cpp" />
     <ClCompile Include="src\windowwatch.cpp" />
   </ItemGroup>
