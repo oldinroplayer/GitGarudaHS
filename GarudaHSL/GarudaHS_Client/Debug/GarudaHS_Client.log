@@ -1,14 +1,3 @@
-﻿  pch.cpp
-  dllmain.cpp
-  overlaywatch.cpp
-  memprotect.cpp
-  memscan.cpp
-  netclient.cpp
-  selfprotect.cpp
-  threadwatch.cpp
-  unloadprotect.cpp
-  watcher.cpp
-  windowwatch.cpp
-  Generating Code...
+﻿  unloadprotect.cpp
      Creating library F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.lib and object F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.exp
   GarudaHS_Client.vcxproj -> F:\Private MMO\Republic Project\12. Republic Anti Cheat\GitGarudaHS\GitGarudaHS\GarudaHSL\Debug\GarudaHS_Client.dll
