@@ -3,6 +3,7 @@
 #include "watcher.h"
 #include "selfprotect.h"
 #include "memprotect.h"
+#include "unloadprotect.h"
 
 DWORD WINAPI MulaiThread(LPVOID lpParam) {
     while (true) {
@@ -17,6 +18,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         CreateThread(nullptr, 0, MulaiThread, nullptr, 0, nullptr);
         mulai_self_protect(); // Thread proteksi
         proteksi_memori_dll(hModule); // Proteksi memori DLL
+		init_unload_protect(hModule); // Inisialisasi proteksi unload
     }
     return TRUE;
 }
