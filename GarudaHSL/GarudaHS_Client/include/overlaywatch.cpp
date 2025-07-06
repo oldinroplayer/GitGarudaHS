@@ -8,7 +8,7 @@
 #include <tlhelp32.h>
 
 // Daftar aplikasi yang diizinkan (whitelist)
-const std::set<std::wstring> ALLOWED_PROCESSES = {
+static const std::set<std::wstring> ALLOWED_PROCESSES = {
     L"discord.exe",
     L"steam.exe",
     L"nvidia.exe",
@@ -31,7 +31,7 @@ const std::set<std::wstring> ALLOWED_PROCESSES = {
 };
 
 // Daftar nama window yang diizinkan
-const std::set<std::wstring> ALLOWED_WINDOW_NAMES = {
+static const std::set<std::wstring> ALLOWED_WINDOW_NAMES = {
     L"Discord",
     L"Steam",
     L"NVIDIA GeForce Experience",

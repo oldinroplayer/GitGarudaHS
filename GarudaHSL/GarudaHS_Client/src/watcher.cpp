@@ -10,7 +10,7 @@
 #include "netclient.h"
 #include "memscan.h"
 
-std::vector<std::wstring> proses_cheat = {
+static std::vector<std::wstring> proses_cheat = {
     L"cheatengine.exe",
     L"cheatengine-x86_64.exe",
     L"openkore.exe",
